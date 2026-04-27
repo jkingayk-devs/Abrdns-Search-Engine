@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abrdns | Universal Deep Index</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="#" class="logo-brand">ABRDNS<span>.CORE</span></a>
+        
+        <div id="dropContainer" 
+             ondrop="handleFileDrop(event)" 
+             ondragover="event.preventDefault(); this.style.borderColor='#00f2ea';" 
+             ondragleave="this.style.borderColor='#303134';">
+            
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Search the unindexed web or drop an .exe for analysis...">
+                <div id="fileIndicator" style="display:none; color:#ff0050; font-size:10px; font-weight:bold; padding-right:10px;">
+                    BINARY_MODE
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="filter-tabs">
+        <div class="filter-tab active" onclick="switchTab('all', this)">All</div>
+        <div class="filter-tab" onclick="switchTab('research', this)">Research</div>
+        <div class="filter-tab" onclick="switchTab('binary', this)">Binary Analysis</div>
+        <div class="filter-tab" onclick="switchTab('news', this)">News</div>
+        <div class="filter-tab" onclick="switchTab('media', this)">Video/Images</div>
+    </div>
+
+    <main class="content-grid">
+        <section class="results-area" id="resultsDisplay">
+            <div class="welcome-hero">
+                <h2>Welcome to Abrdns Search v1.0</h2>
+                <p>The first search engine designed for the deep intelligence community.</p>
+                <div style="margin-top:20px; color:var(--brand-cyan); font-size:12px;">READY FOR SCANNING...</div>
+            </div>
+        </section>
+
+        <aside class="sidebar-panel">
+            <h2 class="sidebar-title">Knowledge Node</h2>
+            <div id="sideInfo" style="color: #888; font-size: 14px;">
+                Waiting for query input...
+            </div>
+            <div id="sidePanel" style="display:none; margin-top:20px;">
+                <h3 id="sideTitle" style="color:var(--brand-cyan);"></h3>
+                <p id="sideDesc" style="font-size:13px; margin-top:10px;"></p>
+            </div>
+        </aside>
+    </main>
+	<input type="text" id="searchInput" 
+       placeholder="Search the unindexed web or drop an .exe for analysis..."
+       onkeypress="if(event.key === 'Enter') executeSearch()">
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
