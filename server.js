@@ -6,7 +6,15 @@ const { aggregateAll } = require('./utils/aggregator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const path = require('path');
 
+// 1. Tell Express where your static files (HTML, CSS, JS) are
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 2. Explicitly handle the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 // --- 1. MIDDLEWARE ---
 app.use(express.static('public')); 
 app.use(express.json());
