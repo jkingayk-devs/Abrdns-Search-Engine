@@ -1,28 +1,23 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
+const path = require('path'); // Only once!
 const { aggregateAll } = require('./utils/aggregator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const path = require('path');
 
-// 1. Tell Express where your static files (HTML, CSS, JS) are
+// --- 1. MIDDLEWARE ---
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 2. Explicitly handle the root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-// --- 1. MIDDLEWARE ---
-app.use(express.static('public')); 
-app.use(express.json());
-
 // --- 2. DATABASE CONNECTION ---
-mongoose.connect('mongodb://localhost:27017/abrdns_search')
-    .then(() => console.log("[Database] Karachi-Node Connected Successfully"))
-    .catch(err => console.error("[Database] Offline. Ensure MongoDB is running.", err));
+// Using a fallback to prevent crashing on Vercel
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/abrdns_search';
+
+mongoose.connect(mongoURI)
+    .then(() => console.log("[Database] Karachi-Node Connected"))
+    .catch(err => console.log("[Database] Running in Offline Mode (Localhost unavailable on Cloud)"));
 
 const SearchSchema = new mongoose.Schema({
     query: String,
@@ -38,8 +33,10 @@ app.get('/api/search', async (req, res) => {
 
     try {
         const finalResults = await aggregateAll(q, type);
-        // Background Logging
-        new SearchLog({ query: q, resultsCount: finalResults.length }).save();
+        // Silently fail logging if DB is offline
+        if (mongoose.connection.readyState === 1) {
+            new SearchLog({ query: q, resultsCount: finalResults.length }).save().catch(() => {});
+        }
         res.json(finalResults);
     } catch (error) {
         console.error(error);
@@ -50,6 +47,7 @@ app.get('/api/search', async (req, res) => {
 // --- 4. TRENDING API ---
 app.get('/api/trending', async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) return res.json([]);
         const trending = await SearchLog.find().sort({ timestamp: -1 }).limit(5);
         res.json(trending);
     } catch (err) { res.json([]); }
@@ -65,6 +63,11 @@ app.get('/api/status', (req, res) => {
     });
 });
 
+// --- 6. ROOT ROUTE ---
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(PORT, () => {
-    console.log(`[ SYSTEM LIVE ON: http://localhost:${PORT} ]`);
+    console.log(`[ SYSTEM LIVE ON PORT: ${PORT} ]`);
 });
