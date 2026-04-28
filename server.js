@@ -1,24 +1,23 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path'); // Only once!
+const path = require('path');
 const { aggregateAll } = require('./utils/aggregator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-module.exports = app;
 
 // --- 1. MIDDLEWARE ---
 app.use(express.json());
+// Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- 2. DATABASE CONNECTION ---
-// Using a fallback to prevent crashing on Vercel
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/abrdns_search';
 
 mongoose.connect(mongoURI)
     .then(() => console.log("[Database] Karachi-Node Connected"))
-    .catch(err => console.log("[Database] Running in Offline Mode (Localhost unavailable on Cloud)"));
+    .catch(err => console.log("[Database] Running in Offline Mode"));
 
 const SearchSchema = new mongoose.Schema({
     query: String,
@@ -34,7 +33,6 @@ app.get('/api/search', async (req, res) => {
 
     try {
         const finalResults = await aggregateAll(q, type);
-        // Silently fail logging if DB is offline
         if (mongoose.connection.readyState === 1) {
             new SearchLog({ query: q, resultsCount: finalResults.length }).save().catch(() => {});
         }
@@ -64,11 +62,13 @@ app.get('/api/status', (req, res) => {
     });
 });
 
-// --- 6. ROOT ROUTE ---
-app.get('*', (req, res) => {
+// --- 6. ROOT ROUTE (MUST BE LAST) ---
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
     console.log(`[ SYSTEM LIVE ON PORT: ${PORT} ]`);
 });
+
+module.exports = app;

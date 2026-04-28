@@ -30,8 +30,11 @@ async function loadTrendingData() {
 }
 
 function autoSearch(q) {
-    document.getElementById('searchInput').value = q;
-    executeSearch(); 
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = q;
+        executeSearch(); 
+    }
 }
 
 /* --- TAB FILTER ENGINE --- */
@@ -53,7 +56,9 @@ async function switchTab(filterType, element) {
     if (filtered.length === 0) {
         container.innerHTML = `<div class="no-results">No nodes in <b>${filterType}</b>.</div>`;
     } else {
-        // Use your existing render function here
-        renderAdvancedResults(filtered); 
+        // This assumes renderAdvancedResults is defined elsewhere in your full scripts.js
+        if (typeof renderAdvancedResults === "function") {
+            renderAdvancedResults(filtered); 
+        }
     }
 }
