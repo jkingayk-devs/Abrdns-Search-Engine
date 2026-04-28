@@ -1,22 +1,15 @@
 {
-  "name": "abrdns-core-engine",
-  "version": "1.0.0",
-  "description": "Enterprise Meta-Search Aggregator",
+  "name": "abrdns-search-engine",
+  "version": "5.0.0",
+  "description": "Titan OS - Global Digital Ecosystem",
   "main": "server.js",
   "engines": {
-    "node": "18.x"
-  },
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "node": "24.x"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "cheerio": "^1.0.0-rc.12",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "mongoose": "^8.0.0",
-    "xml2js": "^0.6.2"
+    "express": "^4.18.2"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
