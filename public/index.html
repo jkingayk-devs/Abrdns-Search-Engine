@@ -17,7 +17,7 @@
              ondragleave="this.style.borderColor='#303134';">
             
             <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Search the unindexed web or drop an .exe for analysis...">
+                <input type="text" id="searchInput" placeholder="Search the unindexed web or drop an .exe for analysis..." onkeypress="if(event.key === 'Enter') executeSearch()">
                 <div id="fileIndicator" style="display:none; color:#ff0050; font-size:10px; font-weight:bold; padding-right:10px;">
                     BINARY_MODE
                 </div>
@@ -53,11 +53,7 @@
             </div>
         </aside>
     </main>
-	<input type="text" id="searchInput" 
-       placeholder="Search the unindexed web or drop an .exe for analysis..."
-       onkeypress="if(event.key === 'Enter') executeSearch()">
     <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
-
     <script src="scripts.js"></script>
 </body>
 </html>
