@@ -1,74 +1,26 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const { aggregateAll } = require('./utils/aggregator');
-
+const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- 1. MIDDLEWARE ---
-app.use(express.json());
-// Serve static files from the 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public')); // This serves your Titan HTML
 
-// --- 2. DATABASE CONNECTION ---
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/abrdns_search';
-
-mongoose.connect(mongoURI)
-    .then(() => console.log("[Database] Karachi-Node Connected"))
-    .catch(err => console.log("[Database] Running in Offline Mode"));
-
-const SearchSchema = new mongoose.Schema({
-    query: String,
-    timestamp: { type: Date, default: Date.now },
-    resultsCount: Number
-});
-const SearchLog = mongoose.model('SearchLog', SearchSchema);
-
-// --- 3. MASTER SEARCH API ---
-app.get('/api/search', async (req, res) => {
-    const { q, type = 'all' } = req.query;
-    if (!q) return res.status(400).json({ error: "Empty Query" });
-
+// THE MASTER SEARCH ROUTE
+app.get('/search', async (req, res) => {
+    const query = req.query.q;
+    
     try {
-        const finalResults = await aggregateAll(q, type);
-        if (mongoose.connection.readyState === 1) {
-            new SearchLog({ query: q, resultsCount: finalResults.length }).save().catch(() => {});
-        }
-        res.json(finalResults);
+        // We'll start by simulating the "Global Sweep" 
+        // Once you get your API keys, we plug them in here
+        const mockResults = [
+            { title: `Global Result for ${query}`, url: "https://abrdns.titan/node1", desc: "Aggregated data from Yandex and Google nodes." },
+            { title: "Secondary Intelligence Pulse", url: "https://abrdns.titan/node2", desc: "Binary analysis complete. No threats detected." }
+        ];
+
+        res.json(mockResults);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Search Engine Cluster Failure" });
+        res.status(500).send("Node Timeout");
     }
 });
 
-// --- 4. TRENDING API ---
-app.get('/api/trending', async (req, res) => {
-    try {
-        if (mongoose.connection.readyState !== 1) return res.json([]);
-        const trending = await SearchLog.find().sort({ timestamp: -1 }).limit(5);
-        res.json(trending);
-    } catch (err) { res.json([]); }
-});
-
-// --- 5. SYSTEM STATUS ---
-app.get('/api/status', (req, res) => {
-    res.json({ 
-        status: "ONLINE", 
-        version: "1.0.4", 
-        cluster: "Karachi-Node-01",
-        database: mongoose.connection.readyState === 1 ? "CONNECTED" : "DISCONNECTED"
-    });
-});
-
-// --- 6. ROOT ROUTE (MUST BE LAST) ---
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.listen(PORT, () => {
-    console.log(`[ SYSTEM LIVE ON PORT: ${PORT} ]`);
-});
-
-module.exports = app;
+app.listen(PORT, () => console.log(`Abrdns Titan Live on Port ${PORT}`));

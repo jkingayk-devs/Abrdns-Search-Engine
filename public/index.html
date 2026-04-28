@@ -3,57 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abrdns | Universal Deep Index</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <title>Abrdns Search Engine | Titan Node</title>
+    <style>
+        /* --- PROPRIETARY THEME ENGINE --- */
+        :root {
+            --accent: #4285f4;
+            --surface: #ffffff;
+            --canvas: #f8f9fa;
+            --text-prime: #202124;
+            --text-sub: #5f6368;
+            --border: #dadce0;
+            --ad-bg: #fffcf0;
+            --ad-border: #ebd7a8;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-    <nav class="main-nav">
-        <a href="#" class="logo-brand">ABRDNS<span>.CORE</span></a>
+        /* DARK MODE OVERRIDES */
+        body.dark-mode {
+            --surface: #171717;
+            --canvas: #0a0a0a;
+            --text-prime: #e8eaed;
+            --text-sub: #bdc1c6;
+            --border: #3c4043;
+            --ad-bg: #1c1910;
+            --ad-border: #423b24;
+        }
+
+        * { box-sizing: border-box; transition: background 0.2s, color 0.1s; }
+        body {
+            background-color: var(--canvas);
+            color: var(--text-prime);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0; min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .hub-nav {
+            background: var(--surface);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .brand-logo { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; cursor: pointer; }
+        .brand-logo span { color: var(--accent); }
+
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
         
-        <div id="dropContainer" 
-             ondrop="handleFileDrop(event)" 
-             ondragover="event.preventDefault(); this.style.borderColor='#00f2ea';" 
-             ondragleave="this.style.borderColor='#303134';">
+        .mode-toggle {
+            background: var(--canvas);
+            border: 1px solid var(--border);
+            color: var(--text-prime);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* --- ADVERTISEMENT SLOTS (THE REVENUE) --- */
+        .ad-banner {
+            max-width: 728px;
+            margin: 20px auto;
+            background: var(--ad-bg);
+            border: 1px solid var(--ad-border);
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .ad-label { font-size: 10px; color: #a58e58; text-transform: uppercase; margin-bottom: 5px; }
+
+        /* --- SEARCH ARCHITECTURE --- */
+        .search-module { background: var(--surface); padding: 30px 20px; box-shadow: var(--shadow-sm); }
+        .search-bar-ui {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            background: var(--canvas);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 8px 20px;
+        }
+        .search-bar-ui:hover { box-shadow: 0 1px 6px rgba(0,0,0,0.2); }
+        
+        input {
+            flex: 1; border: none; background: transparent; outline: none;
+            padding: 10px; font-size: 16px; color: var(--text-prime);
+        }
+
+        /* --- CONTENT GRID --- */
+        .titan-grid {
+            max-width: 1300px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* --- ORGANIC RESULTS --- */
+        .result-entry {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .result-entry .meta { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+        .result-entry h3 { margin: 0 0 8px 0; color: var(--accent); font-size: 19px; cursor: pointer; }
+        .result-entry h3:hover { text-decoration: underline; }
+        .result-entry p { font-size: 14px; color: var(--text-sub); line-height: 1.5; margin: 0; }
+
+        /* --- SIDEBAR PANEL --- */
+        .intel-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            position: sticky; top: 100px;
+        }
+        .intel-panel h4 { margin-top: 0; color: var(--text-prime); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+        .trending-row { font-size: 13px; margin: 12px 0; color: var(--text-sub); display: flex; justify-content: space-between; }
+        .trend-up { color: #1e8e3e; font-weight: bold; }
+
+    </style>
+</head>
+<body class="dark-mode"> <nav class="hub-nav">
+    <div class="brand-logo" onclick="location.reload()">ABRDNS<span>.TITAN</span></div>
+    <div class="nav-actions">
+        <button class="mode-toggle" onclick="toggleMode()">TOGGLE LIGHT/DARK</button>
+        <div style="width: 30px; height: 30px; background: var(--accent); border-radius: 50%;"></div>
+    </div>
+</nav>
+
+<div class="ad-banner">
+    <div class="ad-label">Sponsored</div>
+    <div style="color: var(--text-prime); font-weight: bold;">Premium Cloud Hosting - Deploy Your App in Seconds</div>
+    <div style="font-size: 12px; color: var(--text-sub);">www.cloudhost.com/special-offer</div>
+</div>
+
+<section class="search-module">
+    <div class="search-bar-ui">
+        <input type="text" id="mainSearch" placeholder="Search the universal index...">
+        <div style="color: var(--accent); font-weight: bold; cursor: pointer;">SEARCH</div>
+    </div>
+</section>
+
+<div class="titan-grid">
+    <main>
+        <div class="result-entry">
+            <div class="meta">https://abrds-core.sh › docs</div>
+            <h3>Deployment Protocol: Integrating Yandex and Bing Clusters</h3>
+            <p>A comprehensive guide on establishing secure handshake protocols between the Titan frontend and global search clusters.</p>
+        </div>
+
+        <div class="result-entry" style="background: var(--ad-bg); border-style: dashed;">
+            <div class="ad-label">Recommended Service</div>
+            <h3 style="color: #a58e58;">Hire the Best Software Engineers</h3>
+            <p>Access a global pool of verified developers. Start building your dream project today.</p>
+        </div>
+
+        <div class="result-entry">
+            <div class="meta">https://security-node.org › analysis</div>
+            <h3>PE Header Analysis for 64-bit Architecture</h3>
+            <p>Understanding the structure of Windows executables and how to debug memory offsets during runtime execution.</p>
+        </div>
+    </main>
+
+    <aside>
+        <div class="intel-panel">
+            <h4>Live Market Pulse</h4>
+            <div class="trending-row"><span>GitHub Activity</span> <span class="trend-up">+12%</span></div>
+            <div class="trending-row"><span>Global Query Load</span> <span class="trend-up">+4.5%</span></div>
+            <div class="trending-row"><span>ArXiv Research</span> <span>Stable</span></div>
             
-            <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Search the unindexed web or drop an .exe for analysis..." onkeypress="if(event.key === 'Enter') executeSearch()">
-                <div id="fileIndicator" style="display:none; color:#ff0050; font-size:10px; font-weight:bold; padding-right:10px;">
-                    BINARY_MODE
-                </div>
+            <h4 style="margin-top: 30px;">System Status</h4>
+            <div style="font-size: 12px; color: var(--text-sub);">
+                All nodes operational.<br>
+                Encryption: 256-bit SSL<br>
+                Location: Global Node-01
             </div>
         </div>
-    </nav>
+    </aside>
+</div>
 
-    <div class="filter-tabs">
-        <div class="filter-tab active" onclick="switchTab('all', this)">All</div>
-        <div class="filter-tab" onclick="switchTab('research', this)">Research</div>
-        <div class="filter-tab" onclick="switchTab('binary', this)">Binary Analysis</div>
-        <div class="filter-tab" onclick="switchTab('news', this)">News</div>
-        <div class="filter-tab" onclick="switchTab('media', this)">Video/Images</div>
-    </div>
+<script>
+    function toggleMode() {
+        document.body.classList.toggle('dark-mode');
+    }
 
-    <main class="content-grid">
-        <section class="results-area" id="resultsDisplay">
-            <div class="welcome-hero">
-                <h2>Welcome to Abrdns Search v1.0</h2>
-                <p>The first search engine designed for the deep intelligence community.</p>
-                <div style="margin-top:20px; color:var(--brand-cyan); font-size:12px;">READY FOR SCANNING...</div>
-            </div>
-        </section>
+    const searchInput = document.getElementById('mainSearch');
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            // Trigger your Aggregator Logic here
+            alert('Consulting global nodes for: ' + searchInput.value);
+        }
+    });
+</script>
 
-        <aside class="sidebar-panel">
-            <h2 class="sidebar-title">Knowledge Node</h2>
-            <div id="sideInfo" style="color: #888; font-size: 14px;">
-                Waiting for query input...
-            </div>
-            <div id="sidePanel" style="display:none; margin-top:20px;">
-                <h3 id="sideTitle" style="color:var(--brand-cyan);"></h3>
-                <p id="sideDesc" style="font-size:13px; margin-top:10px;"></p>
-            </div>
-        </aside>
-    </main>
-    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
-    <script src="scripts.js"></script>
 </body>
 </html>
