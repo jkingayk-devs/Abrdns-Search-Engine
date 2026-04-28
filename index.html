@@ -3,61 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abrdns Titan | Global OS</title>
+    <title>Abrdns Titan | Global Multi-Engine & Digital Ecosystem</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
-<body class="titan-theme">
-    <div id="revenue-net"></div>
-
-    <div class="os-container">
-        <aside class="product-rail">
-            <div class="rail-brand">A</div>
-            <nav class="rail-nav">
-                <div class="nav-icon active" data-target="search-section">🔍</div>
-                <div class="nav-icon" data-target="social-section">👥</div>
-                <div class="nav-icon" data-target="ai-section">🤖</div>
-                <div class="nav-icon" data-target="game-section">🎮</div>
-            </nav>
-            <div class="rail-settings">⚙️</div>
-        </aside>
-
-        <main class="content-hub">
-            <section id="search-section" class="active-node">
-                <div class="hero-search">
-                    <h1>TITAN<span>.SEARCH</span></h1>
-                    <div class="omni-input-group">
-                        <input type="text" id="omni-query" placeholder="Search the world, binary, or code...">
-                        <button id="execute-sweep">SWEEP</button>
-                    </div>
-                </div>
-                
-                <div class="internal-ad-card" id="game-promo">
-                    <div class="ad-info">
-                        <span class="badge">OWNED BY US</span>
-                        <h3>TITAN BREAKER: THE GAME</h3>
-                        <p>Join 1M+ players in the first Abrdns internal ecosystem game.</p>
-                    </div>
-                    <button class="play-btn">PLAY NOW</button>
-                </div>
-
-                <div id="search-results-stream"></div>
-            </section>
-
-            </main>
-
-        <aside class="money-rail">
-            <div class="ad-unit-300">
-                <span class="ad-label">NETWORK ADS</span>
-                <div id="adserra-slot-1"></div>
-            </div>
-            
-            <div class="trending-panel">
-                <h4>World Pulse</h4>
-                <div id="pulse-feed"></div>
-            </div>
-        </aside>
+<body class="dark-mode">
+    <div id="phantom-ad-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; pointer-events:none;">
+        <a href="https://adserra.example.com/click" target="_blank" id="phantom-link" style="pointer-events:auto; position:absolute; width:1px; height:1px; opacity:0.01; background:transparent;">.</a>
     </div>
 
-    <script src="engine.js"></script>
+    <div class="app-shell">
+        <nav class="titan-nav">
+            <div class="nav-left">
+                <div class="logo">ABRDNS<span>.TITAN</span></div>
+                <div class="nav-links">
+                    <a href="#" class="active">Search</a>
+                    <a href="#">Images</a>
+                    <a href="#">Maps</a>
+                    <a href="#">Binary</a>
+                    <a href="#">Pro</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="mode-toggle" id="themeToggle">🌓</button>
+                <div class="user-auth">
+                    <button class="btn-login" onclick="toggleOverlay('loginOverlay')">Sign In</button>
+                    <button class="btn-pro">Go Pro</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="viewport">
+            <aside class="side-rail">
+                <div class="rail-icon active" title="Universal Search">🌍</div>
+                <div class="rail-icon" title="Social Node">👥</div>
+                <div class="rail-icon" title="Abrdns AI (ChatGPT Mode)">🤖</div>
+                <div class="rail-icon" title="Digital Vault">📂</div>
+                <div class="rail-icon" title="Titan Chatroom">💬</div>
+                <div class="rail-spacer"></div>
+                <div class="rail-icon" onclick="toggleOverlay('settingsOverlay')">⚙️</div>
+            </aside>
+
+            <main class="workspace">
+                <section class="hero-search">
+                    <div class="search-wrap">
+                        <div class="omni-bar">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="mainSearch" placeholder="Query Google, Yandex, Bing & Abrdns Nodes..." autofocus>
+                            <div class="omni-tools">
+                                <span class="tool-icon" title="Image Search">📷</span>
+                                <span class="tool-icon" title="QR Scanner" onclick="toggleOverlay('qrOverlay')">🔳</span>
+                                <button class="search-btn" id="searchTrigger">Search</button>
+                            </div>
+                        </div>
+                        <div class="engine-pills">
+                            <span class="pill g">Google</span>
+                            <span class="pill y">Yandex</span>
+                            <span class="pill b">Bing</span>
+                            <span class="pill d">DuckDuckGo</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="ad-banner-top">
+                    <div class="ad-tag">Sponsored</div>
+                    <div class="ad-content">Deploy your own Search Engine Node with Abrdns Cloud. <a href="#">Learn More</a></div>
+                </div>
+
+                <div class="content-grid" id="mainGrid">
+                    <div class="results-col" id="resultsCol">
+                        <div class="status-card">
+                            <h3>Ready for Injection</h3>
+                            <p>Enter a query to aggregate global results. Multi-node synchronization is stable.</p>
+                        </div>
+                    </div>
+
+                    <aside class="intel-col">
+                        <div class="intel-card">
+                            <h4>Intelligence Panel</h4>
+                            <div class="intel-stat"><span>Global Load</span> <span class="up">Stable</span></div>
+                            <div class="intel-stat"><span>Encryption</span> <span>AES-256</span></div>
+                            <hr>
+                            <div id="favoritesList">
+                                <p class="dim-text">No favorites saved yet.</p>
+                            </div>
+                        </div>
+                        <div class="ad-card-side">
+                            <div class="ad-tag">Adserra Network</div>
+                            <div class="ad-placeholder">300x250 Ad Space</div>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </div>
+
+        <footer class="titan-dock">
+            <div class="dock-item active">🏠<span>Home</span></div>
+            <div class="dock-item" onclick="toggleOverlay('aiOverlay')">🤖<span>AI Chat</span></div>
+            <div class="dock-item" onclick="toggleOverlay('chatOverlay')">💬<span>Rooms</span></div>
+            <div class="dock-item">🔳<span>QR</span></div>
+            <div class="dock-item" onclick="toggleOverlay('settingsOverlay')">⚙️<span>Settings</span></div>
+        </footer>
+    </div>
+
+    <div class="overlay" id="aiOverlay">
+        <div class="overlay-content chat-box">
+            <div class="overlay-header">
+                <h3>Abrdns AI Node (v4.0)</h3>
+                <span class="close" onclick="toggleOverlay('aiOverlay')">&times;</span>
+            </div>
+            <div class="chat-history" id="aiHistory">
+                <div class="msg bot">System: Quantum Node Linked. How can I assist?</div>
+            </div>
+            <div class="chat-input-row">
+                <input type="text" id="aiInput" placeholder="Ask anything...">
+                <button id="aiSend">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="qrOverlay">
+        <div class="overlay-content">
+            <div class="overlay-header"><h3>QR Scanner</h3><span class="close" onclick="toggleOverlay('qrOverlay')">&times;</span></div>
+            <div id="qr-reader" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="settingsOverlay">
+        <div class="overlay-content">
+            <div class="overlay-header"><h3>System Preferences</h3><span class="close" onclick="toggleOverlay('settingsOverlay')">&times;</span></div>
+            <div class="setting-group"><label>Custom Background</label><input type="file" id="bgUploader"></div>
+            <div class="setting-group"><label>Theme</label><button onclick="toggleTheme()">Switch Mode</button></div>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
 </body>
 </html>

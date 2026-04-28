@@ -1,41 +1,59 @@
-// ABRDNS TITAN OS - CORE SERVER V4.0
-require('dotenv').config();
 const express = require('express');
-const axios = require('axios');
-const nodemailer = require('nodemailer'); // For Email Verification
 const app = express();
+const path = require('path');
 
-app.use(express.json());
-app.use(express.static('public'));
+// Serve all files from the root directory for local Node.js testing
+app.use(express.static(__dirname));
 
-// --- REAL SEARCH AGGREGATOR ---
-app.get('/api/search', async (req, res) => {
-    const { q } = req.query;
-    try {
-        // Parallel fetch from the "Slave" engines
-        const [google, yandex] = await Promise.allSettled([
-            axios.get(`https://www.googleapis.com/customsearch/v1?key=${process.env.G_KEY}&cx=${process.env.G_CX}&q=${q}`),
-            axios.get(`https://yandex.com/search/xml?user=${process.env.Y_USER}&key=${process.env.Y_KEY}&query=${q}`)
-        ]);
-        res.json({ results: [...google.value?.data?.items || []] });
-    } catch (e) { res.status(500).send("Node Error"); }
+// Primary Route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// --- AI CHATBOT NODE (FREE GEMINI API) ---
-app.post('/api/ai', async (req, res) => {
-    try {
-        const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.AI_KEY}`, {
-            contents: [{ parts: [{ text: req.body.prompt }] }]
-        });
-        res.json({ reply: response.data.candidates[0].content.parts[0].text });
-    } catch (e) { res.json({ reply: "AI Node Offline. Check API Key." }); }
+// Advanced Search API - Aggregating from multiple simulated nodes
+app.get('/search', (req, res) => {
+    const query = req.query.q || "";
+    const timestamp = new Date().toISOString();
+    
+    // Simulating deep-web and global engine results
+    const results = [
+        {
+            title: `Google Result: ${query}`,
+            url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+            desc: "Primary index result retrieved via Titan Bridge.",
+            source: "Google"
+        },
+        {
+            title: `Yandex Node: ${query}`,
+            url: "https://yandex.com/search",
+            desc: "Eastern European data node synchronization complete.",
+            source: "Yandex"
+        },
+        {
+            title: `Abrdns Intelligence: ${query} Analysis`,
+            url: "https://abrdns.node/internal",
+            desc: "Internal Titan Engine proprietary data analysis for query injection.",
+            source: "Titan"
+        },
+        {
+            title: "64-bit Executable Header Analysis",
+            url: "https://titan.engine/binary",
+            desc: "Binary inspection node ready for EasyPeasy.exe analysis.",
+            source: "Binary"
+        }
+    ];
+
+    console.log(`[${timestamp}] Query Injected: ${query}`);
+    res.json(results);
 });
 
-// --- EMAIL VERIFICATION SYSTEM ---
-app.post('/api/auth/verify', (req, res) => {
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    // Logic: Send otp via Nodemailer, save to session
-    res.json({ status: "Sent to " + req.body.email });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`
+    ===============================================
+    🚀 TITAN MULTI-ENGINE CORE ONLINE
+    📡 LOCAL TEST SERVER: http://localhost:${PORT}
+    🛠️ READY FOR VERCEL DEPLOYMENT
+    ===============================================
+    `);
 });
-
-app.listen(process.env.PORT || 3000, () => console.log("TITAN OS ONLINE"));
